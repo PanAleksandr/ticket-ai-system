@@ -1,6 +1,6 @@
 # Ticket AI System
 
-Simple Spring Boot project.
+Simple Spring Boot project(IBM)
 
 The system takes user comments and automatically creates support tickets if needed.
 
