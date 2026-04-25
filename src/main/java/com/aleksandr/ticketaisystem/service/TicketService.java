@@ -12,8 +12,12 @@ public class TicketService {
         this.huggingFaceService = huggingFaceService;
     }
 
-    // check comment
+    // check if comment should become a ticket
     public boolean shouldCreateTicket(String text) {
+        if (text == null || text.isBlank()) {
+            return false;
+        }
+
         String lowerText = text.toLowerCase();
 
         return lowerText.contains("error")
@@ -21,24 +25,28 @@ public class TicketService {
                 || lowerText.contains("problem")
                 || lowerText.contains("not working")
                 || lowerText.contains("payment")
+                || lowerText.contains("billing")
                 || lowerText.contains("login")
                 || lowerText.contains("account")
                 || lowerText.contains("urgent")
+                || lowerText.contains("critical")
                 || lowerText.contains("cannot use");
     }
 
     // create ticket from comment text
     public Ticket generateTicket(String text) {
+        if (text == null || text.isBlank()) {
+            text = "Empty comment";
+        }
+
         String aiResponse = huggingFaceService.analyzeText(text);
+        System.out.println("AI RESPONSE: " + aiResponse);
 
         Ticket ticket = new Ticket();
-
         ticket.setTitle(generateTitle(text));
         ticket.setCategory(detectCategory(text));
         ticket.setPriority(detectPriority(text));
         ticket.setSummary(text);
-
-        System.out.println("AI RESPONSE: " + aiResponse);
 
         return ticket;
     }
@@ -70,7 +78,9 @@ public class TicketService {
     private String detectPriority(String text) {
         String lowerText = text.toLowerCase();
 
-        if (lowerText.contains("urgent") || lowerText.contains("critical") || lowerText.contains("cannot use")) {
+        if (lowerText.contains("urgent")
+                || lowerText.contains("critical")
+                || lowerText.contains("cannot use")) {
             return "high";
         }
 
